@@ -1,287 +1,284 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Star, Target, Users, Award, CheckCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-
-interface Quest {
-  id: string;
-  title: string;
-  description: string;
-  xp: number;
-  type: 'social' | 'upload' | 'quiz' | 'link';
-  status: 'available' | 'completed' | 'pending';
-  category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-}
-
-interface User {
-  id: string;
-  name: string;
-  xp: number;
-  level: number;
-  rank: number;
-  avatar: string;
-  completedQuests: number;
-  badges: string[];
-}
+import { Trophy, Target, Users, Star, Clock, CheckCircle, Zap, Award } from 'lucide-react';
 
 const Dashboard = () => {
-  const { toast } = useToast();
-  const [user, setUser] = useState<User>({
-    id: '1',
-    name: 'Alex Johnson',
-    xp: 2750,
-    level: 12,
-    rank: 3,
-    avatar: '/placeholder.svg',
-    completedQuests: 23,
-    badges: ['Early Bird', 'Social Butterfly', 'Quest Master']
-  });
+  const [completedQuests, setCompletedQuests] = useState<string[]>([]);
 
-  const [quests, setQuests] = useState<Quest[]>([
+  const userStats = {
+    totalXP: 2450,
+    rank: 7,
+    weeklyXP: 320,
+    completedQuests: 12,
+    badges: 4
+  };
+
+  const availableQuests = [
     {
       id: '1',
       title: 'Follow us on Twitter',
       description: 'Follow our official Twitter account and help us grow our community',
       xp: 100,
-      type: 'social',
-      status: 'available',
-      category: 'Social Media',
-      difficulty: 'easy'
+      difficulty: 'Easy',
+      category: 'Social',
+      timeEstimate: '2 min',
+      type: 'social'
     },
     {
       id: '2',
-      title: 'Share your story',
-      description: 'Upload a photo or video sharing how our platform helped you',
-      xp: 250,
-      type: 'upload',
-      status: 'available',
-      category: 'Content Creation',
-      difficulty: 'medium'
+      title: 'Join Discord Community',
+      description: 'Join our Discord server and introduce yourself in #general',
+      xp: 150,
+      difficulty: 'Easy',
+      category: 'Social',
+      timeEstimate: '5 min',
+      type: 'social'
     },
     {
       id: '3',
-      title: 'Community Quiz',
-      description: 'Test your knowledge about our platform and community guidelines',
-      xp: 150,
-      type: 'quiz',
-      status: 'completed',
-      category: 'Knowledge',
-      difficulty: 'easy'
+      title: 'Share your story',
+      description: 'Upload a photo or video sharing how our platform helped you',
+      xp: 250,
+      difficulty: 'Medium',
+      category: 'Content',
+      timeEstimate: '10 min',
+      type: 'upload'
     },
     {
       id: '4',
-      title: 'Join Discord Server',
-      description: 'Join our Discord community and introduce yourself',
+      title: 'Community Quiz',
+      description: 'Test your knowledge about our platform and community guidelines',
       xp: 200,
-      type: 'social',
-      status: 'pending',
-      category: 'Social Media',
-      difficulty: 'easy'
-    },
-    {
-      id: '5',
-      title: 'Refer a Friend',
-      description: 'Invite a friend to join our platform using your referral link',
-      xp: 500,
-      type: 'link',
-      status: 'available',
-      category: 'Referral',
-      difficulty: 'hard'
+      difficulty: 'Medium',
+      category: 'Knowledge',
+      timeEstimate: '8 min',
+      type: 'quiz'
     }
-  ]);
+  ];
 
-  const [activeTab, setActiveTab] = useState('available');
+  const recentActivity = [
+    { action: 'Completed "Follow us on Twitter"', xp: 100, time: '2 hours ago' },
+    { action: 'Earned "Early Adopter" badge', xp: 0, time: '1 day ago' },
+    { action: 'Completed "Join Discord"', xp: 150, time: '2 days ago' },
+    { action: 'Completed "Community Quiz"', xp: 200, time: '3 days ago' }
+  ];
 
-  const filteredQuests = quests.filter(quest => {
-    if (activeTab === 'available') return quest.status === 'available';
-    if (activeTab === 'completed') return quest.status === 'completed';
-    if (activeTab === 'pending') return quest.status === 'pending';
-    return true;
-  });
-
-  const handleStartQuest = (questId: string) => {
-    setQuests(prev => prev.map(quest => 
-      quest.id === questId 
-        ? { ...quest, status: 'pending' as const }
-        : quest
-    ));
-    toast({
-      title: "Quest Started!",
-      description: "Complete the quest to earn XP and climb the leaderboard.",
-    });
+  const handleQuestComplete = (questId: string) => {
+    if (!completedQuests.includes(questId)) {
+      setCompletedQuests([...completedQuests, questId]);
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'bg-green-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'hard': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case 'Easy': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'Medium': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'Hard': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'social': return <Users className="w-4 h-4" />;
-      case 'upload': return <Star className="w-4 h-4" />;
-      case 'quiz': return <Target className="w-4 h-4" />;
-      case 'link': return <Award className="w-4 h-4" />;
-      default: return <CheckCircle className="w-4 h-4" />;
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'Social': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'Content': return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+      case 'Knowledge': return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
-  const nextLevelXP = (user.level + 1) * 1000;
-  const currentLevelXP = user.level * 1000;
-  const progressPercentage = ((user.xp - currentLevelXP) / (nextLevelXP - currentLevelXP)) * 100;
+  const rankProgress = ((userStats.rank - 1) / 10) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* User Stats Header */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="md:col-span-2 bg-white/10 backdrop-blur-lg border-white/20 text-white">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col space-y-2">
+        <h1 className="text-3xl font-bold text-white">Welcome back!</h1>
+        <p className="text-slate-300">Complete quests to earn XP and climb the leaderboard</p>
+      </div>
+
+      {/* Stats Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-yellow-400">{userStats.totalXP.toLocaleString()}</div>
+            <div className="text-sm text-slate-400">Total XP</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-purple-400">#{userStats.rank}</div>
+            <div className="text-sm text-slate-400">Global Rank</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-green-400">{userStats.weeklyXP}</div>
+            <div className="text-sm text-slate-400">Weekly XP</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-blue-400">{userStats.completedQuests}</div>
+            <div className="text-sm text-slate-400">Quests Done</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-orange-400">{userStats.badges}</div>
+            <div className="text-sm text-slate-400">Badges</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Available Quests */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-white">Available Quests</h2>
+            <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+              {availableQuests.length} available
+            </Badge>
+          </div>
+          
+          <div className="space-y-4">
+            {availableQuests.map((quest) => {
+              const isCompleted = completedQuests.includes(quest.id);
+              
+              return (
+                <Card key={quest.id} className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50 hover:bg-slate-800/70 transition-all">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Target className="w-5 h-5 text-purple-400" />
+                          <h3 className="text-lg font-semibold text-white">{quest.title}</h3>
+                          {isCompleted && <CheckCircle className="w-5 h-5 text-green-400" />}
+                        </div>
+                        <p className="text-slate-300 mb-3">{quest.description}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge className={getDifficultyColor(quest.difficulty)}>
+                            {quest.difficulty}
+                          </Badge>
+                          <Badge className={getCategoryColor(quest.category)}>
+                            {quest.category}
+                          </Badge>
+                          <Badge className="bg-slate-600/30 text-slate-300 border-slate-600/30">
+                            <Clock className="w-3 h-3 mr-1" />
+                            {quest.timeEstimate}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="text-right ml-4">
+                        <div className="text-2xl font-bold text-yellow-400 mb-2">
+                          +{quest.xp} XP
+                        </div>
+                        <Button
+                          onClick={() => handleQuestComplete(quest.id)}
+                          disabled={isCompleted}
+                          className={isCompleted 
+                            ? "bg-green-600 text-white cursor-default" 
+                            : "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white"
+                          }
+                        >
+                          {isCompleted ? 'Completed' : 'Start Quest'}
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Rank Progress */}
+          <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
             <CardHeader>
-              <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-2xl font-bold">
-                  {user.name.charAt(0)}
-                </div>
-                <div>
-                  <CardTitle className="text-2xl">{user.name}</CardTitle>
-                  <CardDescription className="text-purple-200">
-                    Level {user.level} • Rank #{user.rank}
-                  </CardDescription>
-                </div>
-              </div>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-yellow-400" />
+                Rank Progress
+              </CardTitle>
+              <CardDescription className="text-slate-400">
+                You're #{userStats.rank} globally
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span>Progress to Level {user.level + 1}</span>
-                  <span>{user.xp - currentLevelXP} / {nextLevelXP - currentLevelXP} XP</span>
+                  <span className="text-slate-400">Progress to Top 5</span>
+                  <span className="text-white font-medium">
+                    {Math.round(rankProgress)}%
+                  </span>
                 </div>
-                <Progress value={progressPercentage} className="h-3" />
+                <Progress value={rankProgress} className="h-2" />
+                <div className="text-center">
+                  <div className="text-lg font-semibold text-white mb-1">
+                    {5 - userStats.rank} ranks to go!
+                  </div>
+                  <p className="text-sm text-slate-400">
+                    Keep completing quests to climb higher
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total XP</CardTitle>
-              <Trophy className="h-4 w-4 text-yellow-400" />
+          {/* Recent Activity */}
+          <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Zap className="w-5 h-5 text-blue-400" />
+                Recent Activity
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-400">{user.xp.toLocaleString()}</div>
-              <p className="text-xs text-purple-200">+150 this week</p>
+              <div className="space-y-3">
+                {recentActivity.map((activity, index) => (
+                  <div key={index} className="flex items-start space-x-3 pb-3 last:pb-0 border-b border-slate-700/50 last:border-b-0">
+                    <div className="w-2 h-2 rounded-full bg-purple-400 mt-2 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-white font-medium">{activity.action}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        {activity.xp > 0 && (
+                          <span className="text-xs text-yellow-400">+{activity.xp} XP</span>
+                        )}
+                        <span className="text-xs text-slate-500">{activity.time}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed Quests</CardTitle>
-              <CheckCircle className="h-4 w-4 text-green-400" />
+          {/* Quick Actions */}
+          <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Award className="w-5 h-5 text-orange-400" />
+                Quick Actions
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-400">{user.completedQuests}</div>
-              <p className="text-xs text-purple-200">5 this week</p>
+            <CardContent className="space-y-3">
+              <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white">
+                View Leaderboard
+              </Button>
+              <Button variant="outline" className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white">
+                Check Profile
+              </Button>
+              <Button variant="outline" className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white">
+                Browse All Quests
+              </Button>
             </CardContent>
           </Card>
         </div>
-
-        {/* Badges Section */}
-        <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Award className="w-5 h-5 text-yellow-400" />
-              Your Badges
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {user.badges.map((badge, index) => (
-                <Badge key={index} className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-3 py-1">
-                  {badge}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Quests Section */}
-        <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
-          <CardHeader>
-            <CardTitle>Available Quests</CardTitle>
-            <CardDescription className="text-purple-200">
-              Complete quests to earn XP and climb the leaderboard
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-white/10">
-                <TabsTrigger value="available" className="data-[state=active]:bg-purple-500">
-                  Available ({quests.filter(q => q.status === 'available').length})
-                </TabsTrigger>
-                <TabsTrigger value="pending" className="data-[state=active]:bg-purple-500">
-                  Pending ({quests.filter(q => q.status === 'pending').length})
-                </TabsTrigger>
-                <TabsTrigger value="completed" className="data-[state=active]:bg-purple-500">
-                  Completed ({quests.filter(q => q.status === 'completed').length})
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value={activeTab} className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredQuests.map((quest) => (
-                    <Card key={quest.id} className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-all duration-300">
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            {getTypeIcon(quest.type)}
-                            <Badge variant="outline" className="text-xs">
-                              {quest.category}
-                            </Badge>
-                          </div>
-                          <div className={`w-3 h-3 rounded-full ${getDifficultyColor(quest.difficulty)}`} />
-                        </div>
-                        <CardTitle className="text-lg text-white">{quest.title}</CardTitle>
-                        <CardDescription className="text-purple-200">
-                          {quest.description}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Trophy className="w-4 h-4 text-yellow-400" />
-                            <span className="text-yellow-400 font-semibold">{quest.xp} XP</span>
-                          </div>
-                          {quest.status === 'available' && (
-                            <Button 
-                              onClick={() => handleStartQuest(quest.id)}
-                              className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
-                            >
-                              Start Quest
-                            </Button>
-                          )}
-                          {quest.status === 'pending' && (
-                            <Badge className="bg-yellow-500/20 text-yellow-400">Pending Review</Badge>
-                          )}
-                          {quest.status === 'completed' && (
-                            <Badge className="bg-green-500/20 text-green-400">Completed</Badge>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

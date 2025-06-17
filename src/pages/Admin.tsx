@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -220,10 +219,10 @@ const Admin = () => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'bg-green-500/20 text-green-400';
-      case 'medium': return 'bg-yellow-500/20 text-yellow-400';
-      case 'hard': return 'bg-red-500/20 text-red-400';
-      default: return 'bg-gray-500/20 text-gray-400';
+      case 'easy': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'medium': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'hard': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
@@ -239,10 +238,10 @@ const Admin = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-500/20 text-yellow-400';
-      case 'approved': return 'bg-green-500/20 text-green-400';
-      case 'rejected': return 'bg-red-500/20 text-red-400';
-      default: return 'bg-gray-500/20 text-gray-400';
+      case 'pending': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'approved': return 'bg-green-500/20 text-green-400 border-green-500/30';
+      case 'rejected': return 'bg-red-500/20 text-red-400 border-red-500/30';
+      default: return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     }
   };
 
@@ -250,276 +249,271 @@ const Admin = () => {
   const activeQuestCount = quests.filter(q => q.status === 'active').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-          <div>
-            <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-            <p className="text-purple-200">Manage quests and review user submissions</p>
-          </div>
-          <div className="flex space-x-4">
-            <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-green-400">{activeQuestCount}</div>
-                <div className="text-sm text-purple-200">Active Quests</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-yellow-400">{pendingCount}</div>
-                <div className="text-sm text-purple-200">Pending Reviews</div>
-              </CardContent>
-            </Card>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+          <p className="text-slate-300">Manage quests and review user submissions</p>
         </div>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+          <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-green-400">{activeQuestCount}</div>
+              <div className="text-sm text-slate-400">Active Quests</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-yellow-400">{pendingCount}</div>
+              <div className="text-sm text-slate-400">Pending Reviews</div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
-        {/* Admin Tabs */}
-        <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
-          <CardContent className="p-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-white/10">
-                <TabsTrigger value="quests" className="data-[state=active]:bg-purple-500">
-                  Quest Management
-                </TabsTrigger>
-                <TabsTrigger value="submissions" className="data-[state=active]:bg-purple-500">
-                  Submissions ({pendingCount})
-                </TabsTrigger>
-              </TabsList>
+      {/* Admin Tabs */}
+      <Card className="bg-slate-800/50 backdrop-blur-sm border-slate-700/50">
+        <CardContent className="p-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-slate-700/50">
+              <TabsTrigger value="quests" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+                Quest Management
+              </TabsTrigger>
+              <TabsTrigger value="submissions" className="data-[state=active]:bg-purple-500 data-[state=active]:text-white">
+                Submissions ({pendingCount})
+              </TabsTrigger>
+            </TabsList>
 
-              <TabsContent value="quests" className="mt-6">
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-xl font-semibold text-white">Manage Quests</h3>
-                    <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600">
-                          <Plus className="w-4 h-4 mr-2" />
-                          Create Quest
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-slate-800 border-slate-700 text-white">
-                        <DialogHeader>
-                          <DialogTitle>Create New Quest</DialogTitle>
-                          <DialogDescription className="text-slate-300">
-                            Add a new quest for community members to complete.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4">
+            <TabsContent value="quests" className="mt-6">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-semibold text-white">Manage Quests</h3>
+                  <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create Quest
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-slate-800 border-slate-700 text-white max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-white">Create New Quest</DialogTitle>
+                        <DialogDescription className="text-slate-300">
+                          Add a new quest for community members to complete.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="title" className="text-white">Quest Title</Label>
+                          <Input
+                            id="title"
+                            value={newQuest.title}
+                            onChange={(e) => setNewQuest({...newQuest, title: e.target.value})}
+                            placeholder="Enter quest title..."
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="description" className="text-white">Description</Label>
+                          <Textarea
+                            id="description"
+                            value={newQuest.description}
+                            onChange={(e) => setNewQuest({...newQuest, description: e.target.value})}
+                            placeholder="Describe what users need to do..."
+                            className="bg-slate-700 border-slate-600 text-white placeholder:text-slate-400"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <Label htmlFor="title">Quest Title</Label>
+                            <Label htmlFor="xp" className="text-white">XP Reward</Label>
                             <Input
-                              id="title"
-                              value={newQuest.title}
-                              onChange={(e) => setNewQuest({...newQuest, title: e.target.value})}
-                              placeholder="Enter quest title..."
-                              className="bg-slate-700 border-slate-600"
+                              id="xp"
+                              type="number"
+                              value={newQuest.xp}
+                              onChange={(e) => setNewQuest({...newQuest, xp: parseInt(e.target.value)})}
                             />
                           </div>
-
                           <div className="space-y-2">
-                            <Label htmlFor="description">Description</Label>
-                            <Textarea
-                              id="description"
-                              value={newQuest.description}
-                              onChange={(e) => setNewQuest({...newQuest, description: e.target.value})}
-                              placeholder="Describe what users need to do..."
-                              className="bg-slate-700 border-slate-600"
+                            <Label htmlFor="category" className="text-white">Category</Label>
+                            <Input
+                              id="category"
+                              value={newQuest.category}
+                              onChange={(e) => setNewQuest({...newQuest, category: e.target.value})}
+                              placeholder="e.g., Social Media"
                             />
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="xp">XP Reward</Label>
-                              <Input
-                                id="xp"
-                                type="number"
-                                value={newQuest.xp}
-                                onChange={(e) => setNewQuest({...newQuest, xp: parseInt(e.target.value)})}
-                                className="bg-slate-700 border-slate-600"
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="category">Category</Label>
-                              <Input
-                                id="category"
-                                value={newQuest.category}
-                                onChange={(e) => setNewQuest({...newQuest, category: e.target.value})}
-                                placeholder="e.g., Social Media"
-                                className="bg-slate-700 border-slate-600"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="type">Quest Type</Label>
-                              <Select value={newQuest.type} onValueChange={(value: any) => setNewQuest({...newQuest, type: value})}>
-                                <SelectTrigger className="bg-slate-700 border-slate-600">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-slate-700 border-slate-600">
-                                  <SelectItem value="social">Social Media</SelectItem>
-                                  <SelectItem value="upload">Upload Content</SelectItem>
-                                  <SelectItem value="quiz">Quiz/Survey</SelectItem>
-                                  <SelectItem value="link">Link Submission</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="difficulty">Difficulty</Label>
-                              <Select value={newQuest.difficulty} onValueChange={(value: any) => setNewQuest({...newQuest, difficulty: value})}>
-                                <SelectTrigger className="bg-slate-700 border-slate-600">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="bg-slate-700 border-slate-600">
-                                  <SelectItem value="easy">Easy</SelectItem>
-                                  <SelectItem value="medium">Medium</SelectItem>
-                                  <SelectItem value="hard">Hard</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-
-                          <div className="flex justify-end space-x-2">
-                            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                              Cancel
-                            </Button>
-                            <Button onClick={handleCreateQuest} className="bg-gradient-to-r from-purple-500 to-blue-500">
-                              Create Quest
-                            </Button>
                           </div>
                         </div>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    {quests.map((quest) => (
-                      <Card key={quest.id} className="bg-white/5 backdrop-blur-sm border-white/10">
-                        <CardHeader>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              {getTypeIcon(quest.type)}
-                              <Badge variant="outline" className="text-xs">
-                                {quest.category}
-                              </Badge>
-                              <Badge className={getDifficultyColor(quest.difficulty)}>
-                                {quest.difficulty}
-                              </Badge>
-                            </div>
-                            <Badge className={quest.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}>
-                              {quest.status}
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="type" className="text-white">Quest Type</Label>
+                            <Select value={newQuest.type} onValueChange={(value: any) => setNewQuest({...newQuest, type: value})}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="social">Social Media</SelectItem>
+                                <SelectItem value="upload">Upload Content</SelectItem>
+                                <SelectItem value="quiz">Quiz/Survey</SelectItem>
+                                <SelectItem value="link">Link Submission</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="difficulty" className="text-white">Difficulty</Label>
+                            <Select value={newQuest.difficulty} onValueChange={(value: any) => setNewQuest({...newQuest, difficulty: value})}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="easy">Easy</SelectItem>
+                                <SelectItem value="medium">Medium</SelectItem>
+                                <SelectItem value="hard">Hard</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)} className="border-slate-600 text-slate-300 hover:bg-slate-700">
+                            Cancel
+                          </Button>
+                          <Button onClick={handleCreateQuest} className="bg-gradient-to-r from-purple-500 to-blue-500 text-white">
+                            Create Quest
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {quests.map((quest) => (
+                    <Card key={quest.id} className="bg-slate-700/30 backdrop-blur-sm border-slate-600/50">
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {getTypeIcon(quest.type)}
+                            <Badge variant="outline" className="text-xs border-slate-500 text-slate-300">
+                              {quest.category}
+                            </Badge>
+                            <Badge className={getDifficultyColor(quest.difficulty)}>
+                              {quest.difficulty}
                             </Badge>
                           </div>
-                          <CardTitle className="text-white">{quest.title}</CardTitle>
-                          <CardDescription className="text-purple-200">
-                            {quest.description}
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-4 text-sm text-purple-200">
-                              <span className="text-yellow-400 font-semibold">{quest.xp} XP</span>
-                              <span>{quest.completions} completions</span>
-                              <span>Created {quest.createdAt}</span>
-                            </div>
+                          <Badge className={quest.status === 'active' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gray-500/20 text-gray-400 border-gray-500/30'}>
+                            {quest.status}
+                          </Badge>
+                        </div>
+                        <CardTitle className="text-white">{quest.title}</CardTitle>
+                        <CardDescription className="text-slate-300">
+                          {quest.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-4 text-sm text-slate-300">
+                            <span className="text-yellow-400 font-semibold">{quest.xp} XP</span>
+                            <span>{quest.completions} completions</span>
+                            <span>Created {quest.createdAt}</span>
                           </div>
-                          <div className="flex space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleToggleQuestStatus(quest.id)}
-                              className="border-white/20 text-white hover:bg-white/10"
-                            >
-                              {quest.status === 'active' ? 'Deactivate' : 'Activate'}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-white/20 text-white hover:bg-white/10"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteQuest(quest.id)}
-                              className="border-red-500/50 text-red-400 hover:bg-red-500/10"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleToggleQuestStatus(quest.id)}
+                            className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                          >
+                            {quest.status === 'active' ? 'Deactivate' : 'Activate'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDeleteQuest(quest.id)}
+                            className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-              </TabsContent>
+              </div>
+            </TabsContent>
 
-              <TabsContent value="submissions" className="mt-6">
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-white">Review Submissions</h3>
-                  
-                  <div className="space-y-3">
-                    {submissions.map((submission) => (
-                      <Card key={submission.id} className="bg-white/5 backdrop-blur-sm border-white/10">
-                        <CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="text-white font-semibold">{submission.questTitle}</h4>
-                                <Badge className={getStatusColor(submission.status)}>
-                                  {submission.status}
-                                </Badge>
-                              </div>
-                              <p className="text-purple-200 text-sm mb-2">
-                                Submitted by <span className="font-medium">{submission.userName}</span>
-                              </p>
-                              <p className="text-purple-300 text-sm mb-3">
-                                {submission.submissionData}
-                              </p>
-                              <div className="flex items-center gap-4 text-xs text-purple-400">
-                                <span className="flex items-center gap-1">
-                                  <Clock className="w-3 h-3" />
-                                  {submission.submittedAt}
-                                </span>
-                                {submission.xpAwarded && (
-                                  <span className="text-yellow-400">
-                                    +{submission.xpAwarded} XP awarded
-                                  </span>
-                                )}
-                              </div>
+            <TabsContent value="submissions" className="mt-6">
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-white">Review Submissions</h3>
+                
+                <div className="space-y-3">
+                  {submissions.map((submission) => (
+                    <Card key={submission.id} className="bg-slate-700/30 backdrop-blur-sm border-slate-600/50">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h4 className="text-white font-semibold">{submission.questTitle}</h4>
+                              <Badge className={getStatusColor(submission.status)}>
+                                {submission.status}
+                              </Badge>
                             </div>
-                            {submission.status === 'pending' && (
-                              <div className="flex space-x-2 ml-4">
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleSubmissionAction(submission.id, 'approve')}
-                                  className="bg-green-600 hover:bg-green-700"
-                                >
-                                  <Check className="w-4 h-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleSubmissionAction(submission.id, 'reject')}
-                                  className="bg-red-600 hover:bg-red-700"
-                                >
-                                  <X className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            )}
+                            <p className="text-slate-300 text-sm mb-2">
+                              Submitted by <span className="font-medium text-white">{submission.userName}</span>
+                            </p>
+                            <p className="text-slate-400 text-sm mb-3">
+                              {submission.submissionData}
+                            </p>
+                            <div className="flex items-center gap-4 text-xs text-slate-500">
+                              <span className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {submission.submittedAt}
+                              </span>
+                              {submission.xpAwarded && (
+                                <span className="text-yellow-400">
+                                  +{submission.xpAwarded} XP awarded
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                          {submission.status === 'pending' && (
+                            <div className="flex space-x-2 ml-4">
+                              <Button
+                                size="sm"
+                                onClick={() => handleSubmissionAction(submission.id, 'approve')}
+                                className="bg-green-600 hover:bg-green-700 text-white"
+                              >
+                                <Check className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                onClick={() => handleSubmissionAction(submission.id, 'reject')}
+                                className="bg-red-600 hover:bg-red-700 text-white"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };

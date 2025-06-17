@@ -19,17 +19,19 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex w-full">
           <Navigation />
-          <div className="md:ml-64 pt-20 md:pt-0">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
+          <main className="flex-1 w-full md:ml-64">
+            <div className="pt-20 md:pt-6 px-4 md:px-6">
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </main>
         </div>
       </BrowserRouter>
     </TooltipProvider>
